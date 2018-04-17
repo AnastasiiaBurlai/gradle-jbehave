@@ -1,0 +1,38 @@
+group 'cdp-tasks'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'junit:junit:4.11'
+    compile 'org.assertj:assertj-core:1.7.0'
+    compile 'org.jbehave:jbehave-core:3.9.5'
+}
+
+sourceSets.test.resources.srcDir 'src/test/java'
+
+test {
+    doFirst {
+        copy {
+            from(zipTree(jarPath("jbehave-core"))) {
+                include "style/*"
+            }
+            into("build/jbehave/view")
+
+        }
+    }
+}
+
+def jarPath(String jarName) {
+    configurations.testCompile.find({ it.name.startsWith(jarName) }).absolutePath
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}
