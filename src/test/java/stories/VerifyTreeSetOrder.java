@@ -1,33 +1,28 @@
 package stories;
 
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
+import org.jbehave.core.configuration.Configuration;
+import org.jbehave.core.configuration.MostUsefulConfiguration;
+import org.jbehave.core.io.CodeLocations;
+import org.jbehave.core.junit.JUnitStory;
+import org.jbehave.core.reporters.Format;
+import org.jbehave.core.reporters.StoryReporterBuilder;
+import org.jbehave.core.steps.InjectableStepsFactory;
+import org.jbehave.core.steps.InstanceStepsFactory;
+import steps.VerifyTreeSetOrderSteps;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+public class VerifyTreeSetOrder extends JUnitStory {
 
-import static org.assertj.core.api.Assertions.*;
-
-public class VerifyTreeSetOrder {
-
-    Set<Integer> set;
-
-    @Given("new tree set")
-    public void newTreeSet() {
-        set = new TreeSet<>();
+    @Override
+    public Configuration configuration() {
+        return new MostUsefulConfiguration()
+                .useStoryReporterBuilder(new StoryReporterBuilder()
+                        .withFormats(Format.CONSOLE, Format.HTML, Format.STATS)
+                        .withCodeLocation(
+                                CodeLocations.codeLocationFromPath("build/jbehave")));
     }
 
-    @When("I add $elements to set")
-    public void addElementsToSet(List<Integer> elements) {
-        for(Integer element : elements){
-            set.add(element);
-        }
-    }
-
-    @Then("I verify elements are in following order $elements")
-    public void verifyElementsInOrder(List<Integer> elements) {
-        assertThat(set).containsExactly(elements.toArray(new Integer[0]));
+    @Override
+    public InjectableStepsFactory stepsFactory() {
+        return new InstanceStepsFactory(configuration(), new VerifyTreeSetOrderSteps());
     }
 }
